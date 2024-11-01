@@ -18,82 +18,93 @@ class DiagonalMagicCube:
     
     def evaluate(self):
         total_deviation = 0
-        
-        # Check rows, columns, and pillars
+
+        def calculate_deviation(sum_value):
+            return abs(sum_value - self.magic_number)
+
+        # Check
         for i in range(self.n):
-            total_deviation += abs(np.sum(self.cube[i, :, :]) - self.magic_number)
-            total_deviation += abs(np.sum(self.cube[:, i, :]) - self.magic_number)
-            total_deviation += abs(np.sum(self.cube[:, :, i]) - self.magic_number)
-            if i == 0:
-                print("baris\n")
-                print(self.cube[i, :, :])
-                print("KOLOM \n")
-                print(self.cube[:, i, :])
-                # print("baris\n")
-                # print(self.cube[i, :, :])
-        
-        # Check space diagonals
-        total_deviation += abs(np.trace(self.cube) - self.magic_number)
-        total_deviation += abs(np.trace(np.flip(self.cube, axis=0)) - self.magic_number)
-        total_deviation += abs(np.trace(np.flip(self.cube, axis=1)) - self.magic_number)
-        total_deviation += abs(np.trace(np.flip(self.cube, axis=2)) - self.magic_number)
-        
-        # Check plane diagonals (simplified, not all planes)
+            for j in range(self.n):
+                total_deviation += calculate_deviation(np.sum(self.cube[i, j, :]))  # Row
+                total_deviation += calculate_deviation(np.sum(self.cube[i, :, j]))  # Column
+                total_deviation += calculate_deviation(np.sum(self.cube[:, i, j]))  # Pillar
+
+            total_deviation += calculate_deviation(np.sum(self.cube[i, i, :]))  # Diagonal
+            total_deviation += calculate_deviation(np.sum(self.cube[4-i, i, :]))  # Diagonal
+
+            total_deviation += calculate_deviation(np.sum(self.cube[:, i, 4-1]))  # Diagonal
+            total_deviation += calculate_deviation(np.sum(self.cube[:, i, i]))  # Diagonal
+
+            total_deviation += calculate_deviation(np.sum(self.cube[i, :, i]))  # Diagonal
+            total_deviation += calculate_deviation(np.sum(self.cube[4-i, :, i]))  # Diagonal
+
+        # Diagonal Ruang
+        main_diagonal_sum = 0
+        anti_diagonal_sum_1 = 0
+        anti_diagonal_sum_2 = 0
+        anti_diagonal_sum_3 = 0
         for i in range(self.n):
-            total_deviation += abs(np.trace(self.cube[i, :, :]) - self.magic_number)
-            total_deviation += abs(np.trace(self.cube[:, i, :]) - self.magic_number)
-            total_deviation += abs(np.trace(self.cube[:, :, i]) - self.magic_number)
-        
-        return int(np.sum(total_deviation))  # Sum all deviations and convert to integer
-    
+            main_diagonal_sum += self.cube[i, i, i]                         
+            anti_diagonal_sum_1 += self.cube[i, self.n - 1 - i, i]          
+            anti_diagonal_sum_2 += self.cube[self.n - 1 - i, i, i]          
+            anti_diagonal_sum_3 += self.cube[i, i, self.n - 1 - i]          
+
+        total_deviation += calculate_deviation(main_diagonal_sum)
+        total_deviation += calculate_deviation(anti_diagonal_sum_1)
+        total_deviation += calculate_deviation(anti_diagonal_sum_2)
+        total_deviation += calculate_deviation(anti_diagonal_sum_3) 
+ 
+
+        print(total_deviation)
+        return int(total_deviation) 
+
     def swap(self, pos1, pos2):
         x = self.cube[pos1] 
         y = self.cube[pos2]
-        # print(x)
-        # print(y)
-        self.cube[pos1], self.cube[pos2] = y, x
+        self.cube[pos1], self.cube[pos2] =y,x
     
     def get_random_position(self):
         return tuple(random.randint(0, self.n-1) for _ in range(3))
 
-class HillClimbing:
-    def __init__(self, cube, max_iterations=1):
+
+class SteepestHillClimbing:
+    def __init__(self, cube, max_iterations=100):
         self.cube = cube
         self.max_iterations = max_iterations
     
     def run(self):
         current_score = self.cube.evaluate()
-        
-        for _ in range(self.max_iterations):
-            if current_score == 0:  # Perfect solution found
+        print(self.cube.cube)
+        i = 0
+        while(True):
+            if current_score == 0:  
                 break
             
             best_neighbor = None
             best_score = current_score
-            
-            # Generate and evaluate all neighbors
-            for _ in range(1):  # Limit neighbor evaluation to 100 for efficiency
+
+            for j in range(100000):  # Find highest neighbor
                 pos1 = self.cube.get_random_position()
                 pos2 = self.cube.get_random_position()
-                test = self.cube
-                print(test)
-                
+                # print(f'Iteration :{i},{j}\n')
+                # print(self.cube.cube)
+                # print(current_score)
+                # print()
                 self.cube.swap(pos1, pos2)
                 new_score = self.cube.evaluate()
                 
                 if new_score < best_score:
                     best_neighbor = (pos1, pos2)
                     best_score = new_score
-                
-                self.cube.swap(pos1, pos2)  # Undo the swap
+                self.cube.swap(pos1, pos2)
             
-            if best_neighbor is None:  # No improvement found
+            if best_neighbor is None: 
                 break
-            
-            # Apply the best swap
+            if best_score >= current_score:
+                break
             self.cube.swap(*best_neighbor)
             current_score = best_score
-        
+            i+=1
         return current_score
 
 def main():
@@ -101,9 +112,9 @@ def main():
     initial_score = cube.evaluate()
     print(f"Initial score: {initial_score}")
     print("Initial cube configuration:")
-    print(cube.cube)
+    # print(cube.cube)
     
-    hill_climbing = HillClimbing(cube)
+    hill_climbing = SteepestHillClimbing(cube)
     final_score = hill_climbing.run()
     
     print(f"Final score: {final_score}")
