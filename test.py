@@ -76,6 +76,7 @@ class SteepestHillClimbing:
         current_score = self.cube.evaluate()
         print(self.cube.cube)
         i = 0
+        # for k in range(1):
         while(True):
             if current_score == 0:  
                 break
@@ -83,7 +84,7 @@ class SteepestHillClimbing:
             best_neighbor = None
             best_score = current_score
 
-            for j in range(100000):  # Find highest neighbor
+            for j in range(100):  # Find highest neighbor
                 pos1 = self.cube.get_random_position()
                 pos2 = self.cube.get_random_position()
                 # print(f'Iteration :{i},{j}\n')
