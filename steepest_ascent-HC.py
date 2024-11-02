@@ -111,9 +111,10 @@ class SteepestHillClimbing:
 def main():
     cube = DiagonalMagicCube()
     initial_score = cube.evaluate()
+    print(f"Magic number: {cube.magic_number}")
     print(f"Initial score: {initial_score}")
     print("Initial cube configuration:")
-    # print(cube.cube)
+    print(cube.cube)
     
     hill_climbing = SteepestHillClimbing(cube)
     final_score = hill_climbing.run()
@@ -124,8 +125,8 @@ def main():
     else:
         print("Local optimum reached.")
     
-    # print("Final cube configuration:")
-    # print(cube.cube)
+    print("Final cube configuration:")
+    print(cube.cube)
 
 if __name__ == "__main__":
     main()
