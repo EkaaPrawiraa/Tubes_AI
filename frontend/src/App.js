@@ -8,6 +8,7 @@ const App = () => {
 	const [playbackSpeed, setPlaybackSpeed] = useState(1);
 	const [cubeStates, setCubeStates] = useState([]);
 	const [totalFrames, setTotalFrames] = useState(0);
+	const [totalTime, setTotalTime] = useState(0);
 	const animationRef = useRef();
 
 	// Fungsi untuk menangani unggahan file JSON
@@ -19,6 +20,7 @@ const App = () => {
 				try {
 					const data = JSON.parse(e.target.result);
 					setCubeStates(data);
+					setTotalTime(data);
 					setTotalFrames(data.length);
 					setCurrentFrame(0);
 					setIsPlaying(false);
@@ -159,6 +161,20 @@ const App = () => {
 					</Typography>
 				</CardContent>
 			</Card>
+			<div style={{
+				position: "fixed",
+				bottom: "20px",
+				right: "20px",
+				backgroundColor: "#fff",
+				padding: "10px",
+				borderRadius: "8px",
+				boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+				zIndex: 1000,
+				border: "1px solid #00acc1"
+			}}>
+				<Typography variant="subtitle1">Total Time:</Typography>
+				<Typography variant="h6">{(totalTime / 1000).toFixed(2)} seconds</Typography>
+			</div>
 		</div>
 	);
 };
