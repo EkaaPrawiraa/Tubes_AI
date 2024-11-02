@@ -77,6 +77,7 @@ class SteepestHillClimbing:
         current_score = self.cube.evaluate()
         print(self.cube.cube)
         i = 0
+        self.list_result.append((i,self.cube.cube,current_score))
         # for k in range(1):
         while(True):
             if current_score == 0:  
@@ -106,8 +107,8 @@ class SteepestHillClimbing:
                 break
             self.cube.swap(*best_neighbor)
             current_score = best_score
-            self.list_result.append((i,self.cube.cube,current_score))
             i+=1
+            self.list_result.append((i,self.cube.cube,current_score))
         return current_score
 
 def main():
@@ -115,8 +116,8 @@ def main():
     initial_score = cube.evaluate()
     print(f"Magic number: {cube.magic_number}")
     print(f"Initial score: {initial_score}")
-    print("Initial cube configuration:")
-    print(cube.cube)
+    # print("Initial cube configuration:")
+    # print(cube.cube)
     
     hill_climbing = SteepestHillClimbing(cube)
     final_score = hill_climbing.run()

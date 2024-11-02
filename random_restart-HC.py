@@ -76,6 +76,7 @@ class RandomRestartHillClimbing:
         current_score = self.cube.evaluate()
         print(self.cube.cube)
         i = 0
+        self.list_result.append((i,self.cube.cube,current_score))
         for k in range(self.max_iterations):
             if current_score == 0:  
                     break
@@ -107,8 +108,8 @@ class RandomRestartHillClimbing:
                     break
                 self.cube.swap(*best_neighbor)
                 current_score = best_score
-                self.list_result.append((i,self.cube.cube,current_score))
                 i+=1
+                self.list_result.append((i,self.cube.cube,current_score))
             
         return self.list_result
 
@@ -116,7 +117,7 @@ def main():
     cube = DiagonalMagicCube()
     initial_score = cube.evaluate()
     print(f"Initial score: {initial_score}")
-    print("Initial cube configuration:")
+    # print("Initial cube configuration:")
     # print(cube.cube)
     
     hill_climbing = RandomRestartHillClimbing(cube,100)
