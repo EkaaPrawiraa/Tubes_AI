@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import time
 
 class DiagonalMagicCube:
     def __init__(self, n=5):
@@ -87,6 +88,7 @@ class RandomRestartHillClimbing:
         self.list_result=[]
     
     def run(self):
+        start_time = time.time()
         current_score = self.cube.evaluate()
         print(self.cube.cube)
         i = 0
@@ -134,8 +136,9 @@ class RandomRestartHillClimbing:
                 current_score = best_score
                 i+=1
                 self.list_result.append((i,self.cube.cube,current_score))
-            
-        return self.list_result
+        end_time = time.time()
+        total_time = end_time - start_time
+        return self.list_result, total_time
 
 def main():
     cube = DiagonalMagicCube()
@@ -145,9 +148,11 @@ def main():
     # print(cube.cube)
     
     hill_climbing = RandomRestartHillClimbing(cube,100)
-    final_score = hill_climbing.run()
+    final_score,total_time = hill_climbing.run()
     # indeks 0 berisi iterasi, state cube, nilai score nya
     print(f"Final score: {final_score}")
+    print(f"Total time: {total_time}")
+
     # if final_score == 0:
     #     print("Perfect solution found!")
     # else:
