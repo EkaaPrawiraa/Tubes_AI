@@ -8,15 +8,10 @@ const App = () => {
 	const [playbackSpeed, setPlaybackSpeed] = useState(1);
 	const [cubeStates, setCubeStates] = useState([]);
 	const [totalFrames, setTotalFrames] = useState(0);
+	const [totalTime, setTotalTime] = useState(0);
 	const animationRef = useRef();
 
-	// Generate a sample 5x5x5 cube state (replace with actual data loading)
-	const generateSampleState = () => {
-		const n = 5;
-		const cube = Array(n).fill().map(() => Array(n).fill().map(() => Array(n).fill().map(() => Math.floor(Math.random() * (n * n * n) + 1))));
-		return cube;
-	};
-
+	// Fungsi untuk menangani unggahan file JSON
 	const handleFileUpload = (event) => {
 		const file = event.target.files[0];
 		if (file) {
@@ -25,6 +20,7 @@ const App = () => {
 				try {
 					const data = JSON.parse(e.target.result);
 					setCubeStates(data);
+					setTotalTime(data);
 					setTotalFrames(data.length);
 					setCurrentFrame(0);
 					setIsPlaying(false);
@@ -36,15 +32,10 @@ const App = () => {
 		}
 	};
 
+	// Fungsi untuk toggle Play/Pause
 	const togglePlayPause = () => {
 		setIsPlaying(!isPlaying);
 	};
-
-	useEffect(() => {
-		const sampleStates = Array(100).fill().map(generateSampleState);
-		setCubeStates(sampleStates);
-		setTotalFrames(sampleStates.length);
-	}, []);
 
 	useEffect(() => {
 		if (isPlaying) {
@@ -56,6 +47,7 @@ const App = () => {
 		return () => cancelAnimationFrame(animationRef.current);
 	}, [isPlaying, currentFrame, playbackSpeed]);
 
+	// Fungsi animasi untuk memainkan frame secara otomatis
 	const animate = () => {
 		setCurrentFrame((prev) => {
 			if (prev >= totalFrames - 1) {
@@ -66,6 +58,7 @@ const App = () => {
 		});
 	};
 
+	// Fungsi untuk menampilkan satu layer dari kubus
 	const renderCubeLayer = (layer, layerIndex) => {
 		if (!cubeStates[currentFrame]) return null;
 
@@ -103,9 +96,21 @@ const App = () => {
 			<Card>
 				<CardHeader title="Magic Cube Visualization" />
 				<CardContent>
+					{/* Menampilkan Iterasi dan Score */}
+					{cubeStates[currentFrame] && (
+						<div style={{ marginBottom: "16px" }}>
+							<Typography variant="h6" color="textPrimary">
+								Iteration: {cubeStates[currentFrame][0]}
+							</Typography>
+							<Typography variant="h6" color="textPrimary">
+								Current Score: {cubeStates[currentFrame][1]}
+							</Typography>
+						</div>
+					)}
+
 					{/* Cube Visualization */}
 					<div style={{ marginBottom: "32px" }}>
-						{cubeStates[currentFrame]?.map((layer, index) => renderCubeLayer(layer, index))}
+						{cubeStates[currentFrame]?.[2].map((layer, index) => renderCubeLayer(layer, index))}
 					</div>
 
 					{/* Controls */}
@@ -156,6 +161,20 @@ const App = () => {
 					</Typography>
 				</CardContent>
 			</Card>
+			<div style={{
+				position: "fixed",
+				bottom: "20px",
+				right: "20px",
+				backgroundColor: "#fff",
+				padding: "10px",
+				borderRadius: "8px",
+				boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+				zIndex: 1000,
+				border: "1px solid #00acc1"
+			}}>
+				<Typography variant="subtitle1">Total Time:</Typography>
+				<Typography variant="h6">{(totalTime / 1000).toFixed(2)} seconds</Typography>
+			</div>
 		</div>
 	);
 };
