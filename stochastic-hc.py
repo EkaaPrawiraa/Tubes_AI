@@ -7,7 +7,6 @@ class DiagonalMagicCube:
         self.size = n**3
         self.magic_number = self.calculate_magic_number()
         self.cube = self.initialize_cube()
-        
     
     def calculate_magic_number(self):
         return ((self.size + 1) * self.n) // 2
@@ -22,6 +21,7 @@ class DiagonalMagicCube:
 
         def calculate_deviation(sum_value):
             return abs(sum_value - self.magic_number)
+
         # Check
         for i in range(self.n):
             for j in range(self.n):
@@ -53,8 +53,9 @@ class DiagonalMagicCube:
         total_deviation += calculate_deviation(anti_diagonal_sum_1)
         total_deviation += calculate_deviation(anti_diagonal_sum_2)
         total_deviation += calculate_deviation(anti_diagonal_sum_3) 
-        if (total_deviation <= 200):
-            print(total_deviation)
+ 
+
+        print(total_deviation)
         return int(total_deviation) 
 
     def swap(self, pos1, pos2):
@@ -66,51 +67,46 @@ class DiagonalMagicCube:
         return tuple(random.randint(0, self.n-1) for _ in range(3))
 
 
-class RandomRestartHillClimbing:
+class SteepestHillClimbing:
     def __init__(self, cube, max_iterations=100):
         self.cube = cube
         self.max_iterations = max_iterations
-        self.list_result=[]
     
     def run(self):
         current_score = self.cube.evaluate()
         print(self.cube.cube)
         i = 0
-        for k in range(self.max_iterations):
+        # for k in range(1):
+        while(True):
             if current_score == 0:  
-                    break
-            while(True): #hill climbing
-                if current_score == 0:  
-                    break
-                
-                best_neighbor = None
-                best_score = current_score
-
-                for j in range(1000):  # Find highest neighbor
-                    pos1 = self.cube.get_random_position()
-                    pos2 = self.cube.get_random_position()
-                    # print(f'Iteration :{i},{j}\n')
-                    # print(self.cube.cube)
-                    # print(current_score)
-                    # print()
-                    self.cube.swap(pos1, pos2)
-                    new_score = self.cube.evaluate()
-                    
-                    if new_score < best_score:
-                        best_neighbor = (pos1, pos2)
-                        best_score = new_score
-                    self.cube.swap(pos1, pos2)
-                
-                if best_neighbor is None: 
-                    break
-                if best_score >= current_score:
-                    break
-                self.cube.swap(*best_neighbor)
-                current_score = best_score
-                self.list_result.append((i,self.cube.cube,current_score))
-                i+=1
+                break
             
-        return self.list_result
+            best_neighbor = None
+            best_score = current_score
+
+            for j in range(100):  # Find highest neighbor
+                pos1 = self.cube.get_random_position()
+                pos2 = self.cube.get_random_position()
+                # print(f'Iteration :{i},{j}\n')
+                # print(self.cube.cube)
+                # print(current_score)
+                # print()
+                self.cube.swap(pos1, pos2)
+                new_score = self.cube.evaluate()
+                
+                if new_score < best_score:
+                    best_neighbor = (pos1, pos2)
+                    best_score = new_score
+                self.cube.swap(pos1, pos2)
+            
+            if best_neighbor is None: 
+                break
+            if best_score >= current_score:
+                break
+            self.cube.swap(*best_neighbor)
+            current_score = best_score
+            i+=1
+        return current_score
 
 def main():
     cube = DiagonalMagicCube()
@@ -119,14 +115,14 @@ def main():
     print("Initial cube configuration:")
     # print(cube.cube)
     
-    hill_climbing = RandomRestartHillClimbing(cube,100)
+    hill_climbing = SteepestHillClimbing(cube)
     final_score = hill_climbing.run()
-    # indeks 0 berisi iterasi, state cube, nilai score nya
+    
     print(f"Final score: {final_score}")
-    # if final_score == 0:
-    #     print("Perfect solution found!")
-    # else:
-    #     print("Local optimum reached.")
+    if final_score == 0:
+        print("Perfect solution found!")
+    else:
+        print("Local optimum reached.")
     
     # print("Final cube configuration:")
     # print(cube.cube)
