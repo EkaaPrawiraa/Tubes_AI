@@ -9,7 +9,7 @@ class DiagonalMagicCube:
         self.cube = self.initialize_cube()
     
     def calculate_magic_number(self):
-        return (self.size + 1) * self.n**2 // 2
+        return ((self.size + 1) * self.n) // 2
     
     def initialize_cube(self):
         numbers = list(range(1, self.size + 1))

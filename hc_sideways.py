@@ -7,7 +7,13 @@ class DiagonalMagicCube:
         self.size = n**3
         self.magic_number = self.calculate_magic_number()
         self.cube = self.initialize_cube()
-    
+
+    @classmethod
+    def constructor(cls, cube):
+        instance = cls()
+        instance.cube = cube
+        return instance
+
     def calculate_magic_number(self):
         return ((self.size + 1) * self.n) // 2
     
@@ -28,7 +34,6 @@ class DiagonalMagicCube:
                 total_deviation += calculate_deviation(np.sum(self.cube[i, j, :]))  # Row
                 total_deviation += calculate_deviation(np.sum(self.cube[i, :, j]))  # Column
                 total_deviation += calculate_deviation(np.sum(self.cube[:, i, j]))  # Pillar
-
             total_deviation += calculate_deviation(np.sum(self.cube[i, i, :]))  # Diagonal
             total_deviation += calculate_deviation(np.sum(self.cube[4-i, i, :]))  # Diagonal
 
@@ -55,7 +60,7 @@ class DiagonalMagicCube:
         total_deviation += calculate_deviation(anti_diagonal_sum_3) 
  
 
-        print(total_deviation)
+        # print(total_deviation)
         return int(total_deviation) 
 
     def swap(self, pos1, pos2):
@@ -65,17 +70,28 @@ class DiagonalMagicCube:
     
     def get_random_position(self):
         return tuple(random.randint(0, self.n-1) for _ in range(3))
+    def get_neighbors(self):
+        neighbors = []
+        flat_cube = self.cube.flatten()
+        for i in range (len(flat_cube)):
+            for j in range(i+1, len(flat_cube)):
+                new_cube = flat_cube.copy()
+                new_cube[i], new_cube[j] = new_cube[j], new_cube[i]
+                cube_3d = new_cube.reshape(self.n, self.n, self.n)
+                neighbors.append(DiagonalMagicCube.constructor(cube_3d))
+        return neighbors
 
-
-class SteepestHillClimbing:
+class SidewaysHillClimbing:
     def __init__(self, cube, max_iterations=100):
         self.cube = cube
         self.max_iterations = max_iterations
+        self.max_sideways = 100
     
     def run(self):
         current_score = self.cube.evaluate()
         print(self.cube.cube)
-        i = 0
+        iteration = 0
+        
         # for k in range(1):
         while(True):
             if current_score == 0:  
@@ -83,30 +99,24 @@ class SteepestHillClimbing:
             
             best_neighbor = None
             best_score = current_score
-
-            for j in range(100):  # Find highest neighbor
-                pos1 = self.cube.get_random_position()
-                pos2 = self.cube.get_random_position()
-                # print(f'Iteration :{i},{j}\n')
-                # print(self.cube.cube)
-                # print(current_score)
-                # print()
-                self.cube.swap(pos1, pos2)
-                new_score = self.cube.evaluate()
-                
+            neighbors = self.cube.get_neighbors()
+            for neighbor in neighbors:
+                new_score = neighbor.evaluate()
                 if new_score < best_score:
-                    best_neighbor = (pos1, pos2)
+                    best_neighbor = neighbor
                     best_score = new_score
-                self.cube.swap(pos1, pos2)
-            
+                elif new_score == best_score:
+                    best_neighbor = neighbor
+                    best_score = new_score
+                    self.max_sideways-=1
             if best_neighbor is None: 
                 break
             if best_score >= current_score:
                 break
-            self.cube.swap(*best_neighbor)
+            self.cube= best_neighbor
             current_score = best_score
-            i+=1
-        return current_score
+            iteration+=1
+        return current_score, iteration, self.cube
 
 def main():
     cube = DiagonalMagicCube()
@@ -115,10 +125,12 @@ def main():
     print("Initial cube configuration:")
     # print(cube.cube)
     
-    hill_climbing = SteepestHillClimbing(cube)
+    hill_climbing = SidewaysHillClimbing(cube)
     final_score = hill_climbing.run()
     
-    print(f"Final score: {final_score}")
+    print(f"Final score: {final_score[0]}")
+    print(f"Number of iterations: {final_score[1]}")
+    print(f"Final cube configuration:\n {final_score[2].cube}")
     if final_score == 0:
         print("Perfect solution found!")
     else:
