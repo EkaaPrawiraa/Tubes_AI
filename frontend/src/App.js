@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Pause, Play, RotateCcw } from "lucide-react";
+import { Pause, Play, RotateCcw, LineChart as ChartIcon } from "lucide-react";
+import {
+	LineChart,
+	Line,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	ResponsiveContainer,
+} from "recharts";
 import axios from "axios";
 
 const SelectionPage = ({ onSelectAlgorithm }) => {
@@ -120,6 +129,7 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 	const [totalTime, setTotalTime] = useState(0);
 	const [isLoading, setIsLoading] = useState(false);
 	const [previousFrame, setPreviousFrame] = useState(null);
+	const [showPlot, setShowPlot] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -159,14 +169,13 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 	}, [currentFrame, cubeStates]);
 
 	const getCellColor = (value, layerIndex, rowIndex, colIndex) => {
-		  
-		  const baseColors = {
-			0: "from-rose-100 to-rose-200",        
-			1: "from-blue-100 to-blue-200",        
-			2: "from-teal-100 to-teal-200",        
-			3: "from-amber-100 to-amber-200",      
-			4: "from-purple-100 to-purple-200",    
-		  };
+		const baseColors = {
+			0: "from-rose-100 to-rose-200",
+			1: "from-blue-100 to-blue-200",
+			2: "from-teal-100 to-teal-200",
+			3: "from-amber-100 to-amber-200",
+			4: "from-purple-100 to-purple-200",
+		};
 		if (previousFrame && previousFrame[1]) {
 			const prevValue = previousFrame[1][layerIndex][rowIndex][colIndex];
 			if (prevValue !== value) {
@@ -177,6 +186,55 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 		return baseColors[layerIndex];
 	};
 
+	const getPlotData = () => {
+		return cubeStates.map((state) => ({
+			iteration: state[0],
+			score: state[2],
+		}));
+	};
+
+	const renderPlot = () => (
+		<div className="fixed inset-0 bg-black/50 flex items-center justify-center p-8">
+			<div className="bg-white rounded-2xl p-6 w-full max-w-4xl">
+				<div className="flex justify-between items-center mb-4">
+					<h3 className="text-xl font-bold text-gray-800">
+						Objective Function Plot
+					</h3>
+					<button
+						onClick={() => setShowPlot(false)}
+						className="p-2 hover:bg-gray-100 rounded-full"
+					>
+						×
+					</button>
+				</div>
+				<div className="h-96">
+					<ResponsiveContainer width="100%" height="100%">
+						<LineChart
+							data={getPlotData()}
+							margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+						>
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis
+								dataKey="iteration"
+								label={{ value: "Iterations", position: "bottom", offset: 0 }}
+							/>
+							<YAxis
+								label={{ value: "Score", angle: -90, position: "insideLeft" }}
+							/>
+							<Tooltip />
+							<Line
+								type="monotone"
+								dataKey="score"
+								stroke="#6366f1"
+								strokeWidth={2}
+								dot={false}
+							/>
+						</LineChart>
+					</ResponsiveContainer>
+				</div>
+			</div>
+		</div>
+	);
 	const togglePlayPause = () => setIsPlaying(!isPlaying);
 
 	useEffect(() => {
@@ -288,6 +346,14 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 							<option value={1.5}>1.5x</option>
 							<option value={2}>2x</option>
 						</select>
+
+						<button
+							onClick={() => setShowPlot(true)}
+							className="p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 transform hover:scale-110"
+							title="Show Objective Function Plot"
+						>
+							<ChartIcon className="h-6 w-6" />
+						</button>
 					</div>
 				</div>
 			</div>
@@ -303,6 +369,8 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 					</div>
 				</div>
 			</div>
+
+			{showPlot && renderPlot()}
 		</div>
 	);
 };
