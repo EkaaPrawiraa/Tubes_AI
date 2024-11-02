@@ -12,7 +12,7 @@ class RandomRestartHillClimbing:
     def run(self):
         start_time = time.time()
         current_score = self.cube.evaluate()
-        print(self.cube.cube)
+        # print(self.cube.cube)
         i = 0
         self.list_result.append((i,self.cube.cube,current_score))
         for k in range(self.max_iterations):

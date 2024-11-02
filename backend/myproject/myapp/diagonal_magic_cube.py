@@ -61,8 +61,8 @@ class DiagonalMagicCube:
         total_deviation += calculate_deviation(anti_diagonal_sum_2)
         total_deviation += calculate_deviation(anti_diagonal_sum_3) 
  
-        if (total_deviation <= 200):
-            print(total_deviation)
+        # if (total_deviation <= 200):
+        #     print(total_deviation)
         
         return int(total_deviation) 
     def swap(self, pos1, pos2):

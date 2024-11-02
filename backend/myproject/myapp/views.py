@@ -18,7 +18,7 @@ def receive_cube(request):
         data = json.loads(request.body)  
         print("Request Body:", request.body)
 
-        if (data['algorithm']== 1): #steepest
+        if (int(data['algorithm'])== 1): #steepest
             hill_climbing = SteepestHillClimbing(cube)
             result,total_time = hill_climbing.run()
             processed_result = [
@@ -31,7 +31,7 @@ def receive_cube(request):
                     "result": processed_result,
                     "total_time": total_time
                 })
-        elif (data['algorithm'] == 2): #random restart
+        elif (int(data['algorithm']) == 2): #random restart
             max_iteration = data['max_iteration'] 
             hill_climbing = RandomRestartHillClimbing(cube,max_iteration)
             result,total_time = hill_climbing.run()
@@ -45,10 +45,10 @@ def receive_cube(request):
                     "total_time": total_time
                 })
             
-        # elif (data.algorithm==1):
-        # elif (data.algorithm==1):
-        # elif (data.algorithm==1):
-        # elif (data.algorithm==1):
+        # elif (data.algorithm==3): sideways
+        # elif (data.algorithm==4): sthocastic
+        # elif (data.algorithm==5): simulated
+        # elif (data.algorithm==6): ga
         return JsonResponse({"error":"Algorithm not recognized"},status = 404)
     # Jika metode bukan POST, kembalikan error
     return JsonResponse({"error": "Invalid request"}, status=400)

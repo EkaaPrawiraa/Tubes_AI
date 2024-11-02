@@ -12,7 +12,7 @@ class SteepestHillClimbing:
     def run(self):
         start_time = time.time()
         current_score = self.cube.evaluate()
-        print(self.cube.cube)
+        # print(self.cube.cube)
         i = 0
         self.list_result.append((i,self.cube.cube,current_score))
 
@@ -28,7 +28,6 @@ class SteepestHillClimbing:
                     if new_score <= best_score:
                         best_neighbor = neighbor
                         best_score = new_score
-                        break
             if best_neighbor is None: 
                 break
             if best_score >= current_score:
