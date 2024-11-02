@@ -10,13 +10,7 @@ const App = () => {
 	const [totalFrames, setTotalFrames] = useState(0);
 	const animationRef = useRef();
 
-	// Generate a sample 5x5x5 cube state (replace with actual data loading)
-	const generateSampleState = () => {
-		const n = 5;
-		const cube = Array(n).fill().map(() => Array(n).fill().map(() => Array(n).fill().map(() => Math.floor(Math.random() * (n * n * n) + 1))));
-		return cube;
-	};
-
+	// Fungsi untuk menangani unggahan file JSON
 	const handleFileUpload = (event) => {
 		const file = event.target.files[0];
 		if (file) {
@@ -36,15 +30,10 @@ const App = () => {
 		}
 	};
 
+	// Fungsi untuk toggle Play/Pause
 	const togglePlayPause = () => {
 		setIsPlaying(!isPlaying);
 	};
-
-	useEffect(() => {
-		const sampleStates = Array(100).fill().map(generateSampleState);
-		setCubeStates(sampleStates);
-		setTotalFrames(sampleStates.length);
-	}, []);
 
 	useEffect(() => {
 		if (isPlaying) {
@@ -56,6 +45,7 @@ const App = () => {
 		return () => cancelAnimationFrame(animationRef.current);
 	}, [isPlaying, currentFrame, playbackSpeed]);
 
+	// Fungsi animasi untuk memainkan frame secara otomatis
 	const animate = () => {
 		setCurrentFrame((prev) => {
 			if (prev >= totalFrames - 1) {
@@ -66,6 +56,7 @@ const App = () => {
 		});
 	};
 
+	// Fungsi untuk menampilkan satu layer dari kubus
 	const renderCubeLayer = (layer, layerIndex) => {
 		if (!cubeStates[currentFrame]) return null;
 
@@ -103,9 +94,21 @@ const App = () => {
 			<Card>
 				<CardHeader title="Magic Cube Visualization" />
 				<CardContent>
+					{/* Menampilkan Iterasi dan Score */}
+					{cubeStates[currentFrame] && (
+						<div style={{ marginBottom: "16px" }}>
+							<Typography variant="h6" color="textPrimary">
+								Iteration: {cubeStates[currentFrame][0]}
+							</Typography>
+							<Typography variant="h6" color="textPrimary">
+								Current Score: {cubeStates[currentFrame][1]}
+							</Typography>
+						</div>
+					)}
+
 					{/* Cube Visualization */}
 					<div style={{ marginBottom: "32px" }}>
-						{cubeStates[currentFrame]?.map((layer, index) => renderCubeLayer(layer, index))}
+						{cubeStates[currentFrame]?.[2].map((layer, index) => renderCubeLayer(layer, index))}
 					</div>
 
 					{/* Controls */}

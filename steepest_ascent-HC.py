@@ -71,6 +71,7 @@ class SteepestHillClimbing:
     def __init__(self, cube, max_iterations=100):
         self.cube = cube
         self.max_iterations = max_iterations
+        self.list_result=[]
     
     def run(self):
         current_score = self.cube.evaluate()
@@ -105,6 +106,7 @@ class SteepestHillClimbing:
                 break
             self.cube.swap(*best_neighbor)
             current_score = best_score
+            self.list_result.append((i,self.cube.cube,current_score))
             i+=1
         return current_score
 
@@ -120,12 +122,12 @@ def main():
     final_score = hill_climbing.run()
     
     print(f"Final score: {final_score}")
-    if final_score == 0:
-        print("Perfect solution found!")
-    else:
-        print("Local optimum reached.")
+    # if final_score == 0:
+    #     print("Perfect solution found!")
+    # else:
+    #     print("Local optimum reached.")
     
-    print("Final cube configuration:")
+    # print("Final cube configuration:")
     print(cube.cube)
 
 if __name__ == "__main__":
