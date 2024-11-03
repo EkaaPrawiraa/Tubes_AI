@@ -26,16 +26,24 @@ class SidewaysHillClimbing:
             
             for neighbor in neighbors:
                 new_score = neighbor.evaluate()
-                if new_score < best_score:
+                if new_score <= best_score:
                     best_neighbor = neighbor
                     best_score = new_score
-                elif new_score == best_score:
-                    best_neighbor = neighbor
-                    best_score = new_score
-                    self.max_sideways -= 1
-            
-            if best_neighbor is None or best_score >= current_score or self.max_sideways <= 0:
+            if best_neighbor is None:
+                # print(1)
                 break
+            if best_score > current_score:
+                # print(2)
+                break
+            if self.max_sideways <= 0:
+                # print(self.max_sideways)
+                # print(3)
+                break
+            if iteration >= self.max_iterations:
+                # print(4)
+                break
+            if best_score == current_score:
+                self.max_sideways -= 1
                 
             self.cube = best_neighbor
             current_score = best_score

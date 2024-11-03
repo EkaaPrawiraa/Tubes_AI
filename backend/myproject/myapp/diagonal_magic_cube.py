@@ -21,29 +21,50 @@ def evaluate_cube(cube, n, magic_number):
 
             total_deviation += calculate_deviation_numba(np.sum(cube[:, i, j]), magic_number)
         
-        # Diagonals
-        total_deviation += calculate_deviation_numba(np.sum(cube[i, i, :]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[n-1-i, i, :]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[:, i, n-1]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[:, i, i]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[i, :, i]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[n-1-i, :, i]), magic_number)
+    # Face diagonals (along each slice)
+    for k in range(n):  # for each slice
+        # XY plane diagonals (for each Z slice)
+        diagonal_sum = 0
+        anti_diagonal_sum = 0
+        for i in range(n):
+            diagonal_sum += cube[i, i, k]
+            anti_diagonal_sum += cube[i, n-1-i, k]
+        total_deviation += calculate_deviation_numba(diagonal_sum, magic_number)
+        total_deviation += calculate_deviation_numba(anti_diagonal_sum, magic_number)
+        
+        # XZ plane diagonals (for each Y slice)
+        diagonal_sum = 0
+        anti_diagonal_sum = 0
+        for i in range(n):
+            diagonal_sum += cube[i, k, i]
+            anti_diagonal_sum += cube[i, k, n-1-i]
+        total_deviation += calculate_deviation_numba(diagonal_sum, magic_number)
+        total_deviation += calculate_deviation_numba(anti_diagonal_sum, magic_number)
+        
+        # YZ plane diagonals (for each X slice)
+        diagonal_sum = 0
+        anti_diagonal_sum = 0
+        for i in range(n):
+            diagonal_sum += cube[k, i, i]
+            anti_diagonal_sum += cube[k, i, n-1-i]
+        total_deviation += calculate_deviation_numba(diagonal_sum, magic_number)
+        total_deviation += calculate_deviation_numba(anti_diagonal_sum, magic_number)
     
         # Diagonal Ruang
-        main_diagonal_sum = 0
-        anti_diagonal_sum_1 = 0
-        anti_diagonal_sum_2 = 0
-        anti_diagonal_sum_3 = 0
-        for i in range(n):
-            main_diagonal_sum += cube[i, i, i]                         
-            anti_diagonal_sum_1 += cube[i, n - 1 - i, i]          
-            anti_diagonal_sum_2 += cube[n - 1 - i, i, i]          
-            anti_diagonal_sum_3 += cube[i, i, n - 1 - i]          
+    main_diagonal_sum = 0
+    anti_diagonal_sum_1 = 0
+    anti_diagonal_sum_2 = 0
+    anti_diagonal_sum_3 = 0
+    for i in range(n):
+        main_diagonal_sum += cube[i, i, i]                         
+        anti_diagonal_sum_1 += cube[i, n - 1 - i, i]          
+        anti_diagonal_sum_2 += cube[n - 1 - i, i, i]          
+        anti_diagonal_sum_3 += cube[i, i, n - 1 - i]          
 
-        total_deviation += calculate_deviation_numba(main_diagonal_sum, magic_number)
-        total_deviation += calculate_deviation_numba(anti_diagonal_sum_1, magic_number)
-        total_deviation += calculate_deviation_numba(anti_diagonal_sum_3, magic_number) 
-        total_deviation += calculate_deviation_numba(anti_diagonal_sum_2, magic_number)
+    total_deviation += calculate_deviation_numba(main_diagonal_sum, magic_number)
+    total_deviation += calculate_deviation_numba(anti_diagonal_sum_1, magic_number)
+    total_deviation += calculate_deviation_numba(anti_diagonal_sum_3, magic_number) 
+    total_deviation += calculate_deviation_numba(anti_diagonal_sum_2, magic_number)
     return total_deviation
 
 @jit(nopython=True)

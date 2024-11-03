@@ -1,6 +1,7 @@
-import numpy as np
-from numba import jit
 import random
+import numpy as np
+import time
+from numba import jit
 
 @jit(nopython=True)
 def calculate_deviation_numba(value, magic_number):
@@ -20,29 +21,50 @@ def evaluate_cube(cube, n, magic_number):
 
             total_deviation += calculate_deviation_numba(np.sum(cube[:, i, j]), magic_number)
         
-        # Diagonals
-        total_deviation += calculate_deviation_numba(np.sum(cube[i, i, :]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[n-1-i, i, :]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[:, i, n-1]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[:, i, i]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[i, :, i]), magic_number)
-        total_deviation += calculate_deviation_numba(np.sum(cube[n-1-i, :, i]), magic_number)
+    # Face diagonals (along each slice)
+    for k in range(n):  # for each slice
+        # XY plane diagonals (for each Z slice)
+        diagonal_sum = 0
+        anti_diagonal_sum = 0
+        for i in range(n):
+            diagonal_sum += cube[i, i, k]
+            anti_diagonal_sum += cube[i, n-1-i, k]
+        total_deviation += calculate_deviation_numba(diagonal_sum, magic_number)
+        total_deviation += calculate_deviation_numba(anti_diagonal_sum, magic_number)
+        
+        # XZ plane diagonals (for each Y slice)
+        diagonal_sum = 0
+        anti_diagonal_sum = 0
+        for i in range(n):
+            diagonal_sum += cube[i, k, i]
+            anti_diagonal_sum += cube[i, k, n-1-i]
+        total_deviation += calculate_deviation_numba(diagonal_sum, magic_number)
+        total_deviation += calculate_deviation_numba(anti_diagonal_sum, magic_number)
+        
+        # YZ plane diagonals (for each X slice)
+        diagonal_sum = 0
+        anti_diagonal_sum = 0
+        for i in range(n):
+            diagonal_sum += cube[k, i, i]
+            anti_diagonal_sum += cube[k, i, n-1-i]
+        total_deviation += calculate_deviation_numba(diagonal_sum, magic_number)
+        total_deviation += calculate_deviation_numba(anti_diagonal_sum, magic_number)
     
         # Diagonal Ruang
-        main_diagonal_sum = 0
-        anti_diagonal_sum_1 = 0
-        anti_diagonal_sum_2 = 0
-        anti_diagonal_sum_3 = 0
-        for i in range(n):
-            main_diagonal_sum += cube[i, i, i]                         
-            anti_diagonal_sum_1 += cube[i, n - 1 - i, i]          
-            anti_diagonal_sum_2 += cube[n - 1 - i, i, i]          
-            anti_diagonal_sum_3 += cube[i, i, n - 1 - i]          
+    main_diagonal_sum = 0
+    anti_diagonal_sum_1 = 0
+    anti_diagonal_sum_2 = 0
+    anti_diagonal_sum_3 = 0
+    for i in range(n):
+        main_diagonal_sum += cube[i, i, i]                         
+        anti_diagonal_sum_1 += cube[i, n - 1 - i, i]          
+        anti_diagonal_sum_2 += cube[n - 1 - i, i, i]          
+        anti_diagonal_sum_3 += cube[i, i, n - 1 - i]          
 
-        total_deviation += calculate_deviation_numba(main_diagonal_sum, magic_number)
-        total_deviation += calculate_deviation_numba(anti_diagonal_sum_1, magic_number)
-        total_deviation += calculate_deviation_numba(anti_diagonal_sum_3, magic_number) 
-        total_deviation += calculate_deviation_numba(anti_diagonal_sum_2, magic_number)
+    total_deviation += calculate_deviation_numba(main_diagonal_sum, magic_number)
+    total_deviation += calculate_deviation_numba(anti_diagonal_sum_1, magic_number)
+    total_deviation += calculate_deviation_numba(anti_diagonal_sum_3, magic_number) 
+    total_deviation += calculate_deviation_numba(anti_diagonal_sum_2, magic_number)
     return total_deviation
 
 @jit(nopython=True)
@@ -92,8 +114,90 @@ class DiagonalMagicCube:
         neighbor_cubes = generate_neighbors_numba(flat_cube, self.n)
         return [DiagonalMagicCube.constructor(cube) for cube in neighbor_cubes]
 
+# class DiagonalMagicCube:
+#     def __init__(self, n=5):
+#         self.n = n
+#         self.size = n**3
+#         self.magic_number = self.calculate_magic_number()
+#         self.cube = self.initialize_cube()
+    
+#     @classmethod 
+#     def constructor(cls, cube):
+#         instance = cls()
+#         instance.cube = cube
+#         return instance
+    
+#     def calculate_magic_number(self):
+#         return ((self.size + 1) * self.n) // 2
+    
+#     def initialize_cube(self):
+#         numbers = list(range(1, self.size + 1))
+#         random.shuffle(numbers)
+#         return np.array(numbers).reshape((self.n, self.n, self.n))
+    
+#     def evaluate(self):
+#         total_deviation = 0
+
+#         def calculate_deviation(sum_value):
+#             return abs(sum_value - self.magic_number)
+
+#         # Check
+#         for i in range(self.n):
+#             for j in range(self.n):
+#                 total_deviation += calculate_deviation(np.sum(self.cube[i, j, :]))  # Row
+#                 total_deviation += calculate_deviation(np.sum(self.cube[i, :, j]))  # Column
+#                 total_deviation += calculate_deviation(np.sum(self.cube[:, i, j]))  # Pillar
+
+#             total_deviation += calculate_deviation(np.sum(self.cube[i, i, :]))  # Diagonal
+#             total_deviation += calculate_deviation(np.sum(self.cube[4-i, i, :]))  # Diagonal
+
+#             total_deviation += calculate_deviation(np.sum(self.cube[:, i, 4-1]))  # Diagonal
+#             total_deviation += calculate_deviation(np.sum(self.cube[:, i, i]))  # Diagonal
+
+#             total_deviation += calculate_deviation(np.sum(self.cube[i, :, i]))  # Diagonal
+#             total_deviation += calculate_deviation(np.sum(self.cube[4-i, :, i]))  # Diagonal
+
+#         # Diagonal Ruang
+#         main_diagonal_sum = 0
+#         anti_diagonal_sum_1 = 0
+#         anti_diagonal_sum_2 = 0
+#         anti_diagonal_sum_3 = 0
+#         for i in range(self.n):
+#             main_diagonal_sum += self.cube[i, i, i]                         
+#             anti_diagonal_sum_1 += self.cube[i, self.n - 1 - i, i]          
+#             anti_diagonal_sum_2 += self.cube[self.n - 1 - i, i, i]          
+#             anti_diagonal_sum_3 += self.cube[i, i, self.n - 1 - i]          
+
+#         total_deviation += calculate_deviation(main_diagonal_sum)
+#         total_deviation += calculate_deviation(anti_diagonal_sum_1)
+#         total_deviation += calculate_deviation(anti_diagonal_sum_2)
+#         total_deviation += calculate_deviation(anti_diagonal_sum_3) 
+ 
+#         # if (total_deviation <= 200):
+#         #     print(total_deviation)
+        
+#         return int(total_deviation) 
+#     def swap(self, pos1, pos2):
+#             x = self.cube[pos1] 
+#             y = self.cube[pos2]
+#             self.cube[pos1], self.cube[pos2] =y,x
+#     def get_random_position(self):
+#         return tuple(random.randint(0, self.n-1) for _ in range(3))
+#     def get_neighbors(self):
+#         neighbors = []
+#         flat_cube = self.cube.flatten()
+#         for i in range (len(flat_cube)):
+#             for j in range(i+1, len(flat_cube)):
+#                 new_cube = flat_cube.copy()
+#                 new_cube[i], new_cube[j] = new_cube[j], new_cube[i]
+#                 cube_3d = new_cube.reshape(self.n, self.n, self.n)
+#                 neighbors.append(DiagonalMagicCube.constructor(cube_3d))
+#         return neighbors
+
+
+
 class SidewaysHillClimbing:
-    def __init__(self, cube, max_iterations=100):
+    def __init__(self, cube, max_iterations=1000):
         self.cube = cube
         self.max_iterations = max_iterations
         self.max_sideways = 100
@@ -113,16 +217,24 @@ class SidewaysHillClimbing:
             
             for neighbor in neighbors:
                 new_score = neighbor.evaluate()
-                if new_score < best_score:
+                if new_score <= best_score:
                     best_neighbor = neighbor
                     best_score = new_score
-                elif new_score == best_score:
-                    best_neighbor = neighbor
-                    best_score = new_score
-                    self.max_sideways -= 1
-            
-            if best_neighbor is None or best_score >= current_score or self.max_sideways <= 0:
+            if best_neighbor is None:
+                # print(1)
                 break
+            if best_score > current_score:
+                # print(2)
+                break
+            if self.max_sideways <= 0:
+                # print(self.max_sideways)
+                # print(3)
+                break
+            if iteration >= self.max_iterations:
+                # print(4)
+                break
+            if best_score == current_score:
+                self.max_sideways -= 1
                 
             self.cube = best_neighbor
             current_score = best_score
