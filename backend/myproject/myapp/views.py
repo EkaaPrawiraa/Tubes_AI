@@ -47,8 +47,9 @@ def receive_cube(request):
                     "total_time": total_time
                 })
             
-        elif (data.algorithm==3):#sideways
-            hill_climbing = SidewaysHillClimbing(cube)
+        elif (int(data['algorithm']) == 3):#sideways
+            max_sideways = data['max_iteration']
+            hill_climbing = SidewaysHillClimbing(cube, max_sideways)
             result,total_time = hill_climbing.run()
             processed_result = [
                 (i, j.tolist() if isinstance(j, np.ndarray) else j, k)
@@ -59,7 +60,7 @@ def receive_cube(request):
                     "result": processed_result,
                     "total_time": total_time
                 })
-        elif (data.algorithm==4): #sthocastic
+        elif (int(data['algorithm']) == 4): #sthocastic
             hill_climbing = StochasticHillClimbing(cube)
             result,total_time = hill_climbing.run()
             processed_result = [

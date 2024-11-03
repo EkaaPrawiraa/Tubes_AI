@@ -91,25 +91,30 @@ class DiagonalMagicCube:
         flat_cube = self.cube.flatten()
         neighbor_cubes = generate_neighbors_numba(flat_cube, self.n)
         return [DiagonalMagicCube.constructor(cube) for cube in neighbor_cubes]
-    def swap(self, pos1, pos2):
-        x = self.cube[pos1] 
-        y = self.cube[pos2]
-        self.cube[pos1], self.cube[pos2] =y,x
+    
+    # def swap(self, pos1, pos2):
+    #     x = self.cube[pos1] 
+    #     y = self.cube[pos2]
+    #     self.cube[pos1], self.cube[pos2] =y,x
     
     def get_random_position(self):
         return tuple(random.randint(0, self.n-1) for _ in range(3))
+    def swap(self, pos1, pos2):
+        x_pos = self.cube[pos1] 
+        y_pos = self.cube[pos2]
+        self.cube[pos1], self.cube[pos2] =y_pos, x_pos
 
 class StochasticHillClimbing:
     def __init__(self, cube, max_iterations=100):
         self.cube = cube
         self.max_iterations = max_iterations
-        self.max_sideways = 100
+        self.list_result=[]
     
     def run(self):
+        start_time = time.time()
         current_score = self.cube.evaluate()
-        print(self.cube.cube)
+        # print(self.cube.cube)
         iteration = 0
-        
         for k in range(1000000):
         # while(True):
             if current_score == 0:  
@@ -122,11 +127,14 @@ class StochasticHillClimbing:
             new_score = self.cube.evaluate()
             if new_score < best_score:
                 best_score = new_score
+                current_score = best_score
+                iteration+=1
+                self.list_result.append((iteration,self.cube.cube,current_score))
             else:
                 self.cube.swap(pos1, pos2)
-            current_score = best_score
-            iteration+=1
-        return iteration, self.cube, current_score
+        end_time = time.time()
+        total_time = end_time - start_time
+        return self.list_result, total_time
 
 def main():
     cube = DiagonalMagicCube()

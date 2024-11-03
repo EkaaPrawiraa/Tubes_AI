@@ -113,6 +113,14 @@ class DiagonalMagicCube:
         flat_cube = self.cube.flatten()
         neighbor_cubes = generate_neighbors_numba(flat_cube, self.n)
         return [DiagonalMagicCube.constructor(cube) for cube in neighbor_cubes]
+    
+    def swap(self, pos1, pos2):
+        x = self.cube[pos1] 
+        y = self.cube[pos2]
+        self.cube[pos1], self.cube[pos2] =y,x
+    
+    def get_random_position(self):
+        return tuple(random.randint(0, self.n-1) for _ in range(3))
 
 # class DiagonalMagicCube:
 #     def __init__(self, n=5):

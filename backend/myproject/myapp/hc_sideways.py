@@ -4,10 +4,10 @@ import random
 import time
 
 class SidewaysHillClimbing:
-    def __init__(self, cube, max_iterations=100):
+    def __init__(self, cube,max_sideways, max_iterations=1000):
         self.cube = cube
         self.max_iterations = max_iterations
-        self.max_sideways = 100
+        self.max_sideways = max_sideways
         self.list_result=[]
     
     def run(self):
@@ -23,12 +23,18 @@ class SidewaysHillClimbing:
             best_score = current_score
 
             neighbors = self.cube.get_neighbors()
+            random.shuffle(neighbors)
             
             for neighbor in neighbors:
                 new_score = neighbor.evaluate()
                 if new_score <= best_score:
-                    best_neighbor = neighbor
-                    best_score = new_score
+                    if new_score < best_score:
+                        best_neighbor = neighbor
+                        best_score = new_score
+                    else:
+                        if best_neighbor != neighbor:
+                            best_neighbor = neighbor
+                            best_score = new_score
             if best_neighbor is None:
                 # print(1)
                 break

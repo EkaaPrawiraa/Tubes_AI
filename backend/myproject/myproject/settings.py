@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'numpy',
     'myapp',
+    'numba',
 ]
 
 MIDDLEWARE = [

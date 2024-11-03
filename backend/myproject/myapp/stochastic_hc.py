@@ -4,15 +4,14 @@ import random
 import time
 
 class StochasticHillClimbing:
-    def __init__(self, cube, max_iterations=100):
+    def __init__(self, cube):
         self.cube = cube
-        self.max_iterations = max_iterations
         self.list_result=[]
     
     def run(self):
         start_time = time.time()
         current_score = self.cube.evaluate()
-        print(self.cube.cube)
+        # print(self.cube.cube)
         iteration = 0
         
         for k in range(1000000):
@@ -32,6 +31,7 @@ class StochasticHillClimbing:
                 self.list_result.append((iteration, self.cube.cube, current_score))
             else:
                 self.cube.swap(pos1, pos2)
+        print(k)
         end_time = time.time()
         total_time = end_time - start_time
         return self.list_result, total_time
