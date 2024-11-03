@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import time
 
 class DiagonalMagicCube:
     def __init__(self, n=5):
@@ -7,7 +8,11 @@ class DiagonalMagicCube:
         self.size = n**3
         self.magic_number = self.calculate_magic_number()
         self.cube = self.initialize_cube()
-        
+    @classmethod 
+    def constructor(cls, cube):
+        instance = cls()
+        instance.cube = cube
+        return instance
     
     def calculate_magic_number(self):
         return ((self.size + 1) * self.n) // 2
@@ -64,6 +69,17 @@ class DiagonalMagicCube:
     
     def get_random_position(self):
         return tuple(random.randint(0, self.n-1) for _ in range(3))
+    
+    def get_neighbors(self):
+        neighbors = []
+        flat_cube = self.cube.flatten()
+        for i in range (len(flat_cube)):
+            for j in range(i+1, len(flat_cube)):
+                new_cube = flat_cube.copy()
+                new_cube[i], new_cube[j] = new_cube[j], new_cube[i]
+                cube_3d = new_cube.reshape(self.n, self.n, self.n)
+                neighbors.append(DiagonalMagicCube.constructor(cube_3d))
+        return neighbors
 
 
 class RandomRestartHillClimbing:
@@ -73,6 +89,7 @@ class RandomRestartHillClimbing:
         self.list_result=[]
     
     def run(self):
+        start_time = time.time()
         current_score = self.cube.evaluate()
         print(self.cube.cube)
         i = 0
@@ -87,50 +104,23 @@ class RandomRestartHillClimbing:
                 best_neighbor = None
                 best_score = current_score
 
-                for j in range(1000):  # Find highest neighbor
-                    pos1 = self.cube.get_random_position()
-                    pos2 = self.cube.get_random_position()
-                    # print(f'Iteration :{i},{j}\n')
-                    # print(self.cube.cube)
-                    # print(current_score)
-                    # print()
-                    self.cube.swap(pos1, pos2)
-                    new_score = self.cube.evaluate()
-                    
-                    if new_score < best_score:
-                        best_neighbor = (pos1, pos2)
+                # Find highest neighbor
+                neighbors = self.cube.get_neighbors()
+                for neighbor in neighbors:
+                    new_score = neighbor.evaluate()
+                    if new_score <= best_score:
+                        best_neighbor = neighbor
                         best_score = new_score
-                    self.cube.swap(pos1, pos2)
                 
                 if best_neighbor is None: 
                     break
                 if best_score >= current_score:
                     break
-                self.cube.swap(*best_neighbor)
+                self.cube= best_neighbor
                 current_score = best_score
                 i+=1
                 self.list_result.append((i,self.cube.cube,current_score))
-            
-        return self.list_result
+        end_time = time.time()
+        total_time = end_time - start_time
+        return self.list_result, total_time
 
-def main():
-    cube = DiagonalMagicCube()
-    initial_score = cube.evaluate()
-    print(f"Initial score: {initial_score}")
-    # print("Initial cube configuration:")
-    # print(cube.cube)
-    
-    hill_climbing = RandomRestartHillClimbing(cube,100)
-    final_score = hill_climbing.run()
-    # indeks 0 berisi iterasi, state cube, nilai score nya
-    print(f"Final score: {final_score}")
-    # if final_score == 0:
-    #     print("Perfect solution found!")
-    # else:
-    #     print("Local optimum reached.")
-    
-    # print("Final cube configuration:")
-    # print(cube.cube)
-
-if __name__ == "__main__":
-    main()
