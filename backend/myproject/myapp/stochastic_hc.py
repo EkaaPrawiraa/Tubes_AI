@@ -2,6 +2,7 @@ import numpy as np
 from numba import jit
 import random
 import time
+import copy
 
 class StochasticHillClimbing:
     def __init__(self, cube):
@@ -13,7 +14,7 @@ class StochasticHillClimbing:
         current_score = self.cube.evaluate()
         # print(self.cube.cube)
         iteration = 0
-        
+        self.list_result.append((iteration, (self.cube.cube).copy(), current_score))
         for k in range(1000000):
         # while(True):
             if current_score == 0:  
@@ -28,7 +29,7 @@ class StochasticHillClimbing:
                 best_score = new_score
                 current_score = best_score
                 iteration+=1
-                self.list_result.append((iteration, self.cube.cube, current_score))
+                self.list_result.append((iteration, (self.cube.cube).copy(), current_score))
             else:
                 self.cube.swap(pos1, pos2)
         print(k)

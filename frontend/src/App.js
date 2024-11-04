@@ -130,6 +130,7 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [previousFrame, setPreviousFrame] = useState(null);
 	const [showPlot, setShowPlot] = useState(false);
+	const [totalFreq, setTotalFreq] = useState([]);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -154,6 +155,9 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 				setTotalTime(data.total_time);
 				setTotalFrames(data.result.length);
 				setCurrentFrame(0);
+				if (data.total_freq) {
+                    setTotalFreq(data.total_freq);
+                }
 				setIsPlaying(false);
 			} catch (error) {
 				console.error("Error fetching data:", error);
@@ -193,12 +197,19 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 		}));
 	};
 
+	const getSimulatedAnnealingData = () => {
+        return cubeStates.map((state) => ({
+            iteration: state[0],
+            probability: state[4] || 0,     // probability (flag) is at index 4 if exists
+        }));
+    };
+
 	const renderPlot = () => (
 		<div className="fixed inset-0 bg-black/50 flex items-center justify-center p-8">
-			<div className="bg-white rounded-2xl p-6 w-full max-w-4xl">
+			<div className="bg-white rounded-2xl p-8 w-full max-w-4xl">
 				<div className="flex justify-between items-center mb-4">
 					<h3 className="text-xl font-bold text-gray-800">
-						Objective Function Plot
+						{selectedAlgorithm === "5" ? "Simulated Annealing Plot" : "Objective Function Plot"}
 					</h3>
 					<button
 						onClick={() => setShowPlot(false)}
@@ -207,30 +218,85 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 						×
 					</button>
 				</div>
-				<div className="h-96">
-					<ResponsiveContainer width="100%" height="100%">
+				<div className={`${selectedAlgorithm === "5" ? 'grid grid-cols-2 gap-6' : ''} h-96`}>
+				{/* Objective Function Plot */}
+				<div className="h-full">
+					<h4 className="text-lg font-semibold text-gray-700 mb-2 text-center">
+					Objective Function
+					</h4>
+					<ResponsiveContainer width="100%" height="90%">
+					<LineChart
+						data={getPlotData()}
+						margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+					>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis
+						dataKey="iteration"
+						label={{ value: "Iterations", position: "bottom", offset: 0 }}
+						/>
+						<YAxis
+						label={{ value: "Score", angle: -90, position: "insideLeft" }}
+						/>
+						<Tooltip />
+						<Line
+						type="monotone"
+						dataKey="score"
+						stroke="#6366f1"
+						strokeWidth={2}
+						dot={false}
+						name="Score"
+						/>
+					</LineChart>
+					</ResponsiveContainer>
+				</div>
+
+				{/* Simulated Annealing Metrics */}
+				{selectedAlgorithm === "5" && (
+					<div className="h-full">
+					<h4 className="text-lg font-semibold text-gray-700 mb-2 text-center">
+						Probability plot
+					</h4>
+					<ResponsiveContainer width="100%" height="90%">
 						<LineChart
-							data={getPlotData()}
-							margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+						data={getSimulatedAnnealingData()}
+						margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
 						>
-							<CartesianGrid strokeDasharray="3 3" />
-							<XAxis
-								dataKey="iteration"
-								label={{ value: "Iterations", position: "bottom", offset: 0 }}
-							/>
-							<YAxis
-								label={{ value: "Score", angle: -90, position: "insideLeft" }}
-							/>
-							<Tooltip />
-							<Line
-								type="monotone"
-								dataKey="score"
-								stroke="#6366f1"
-								strokeWidth={2}
-								dot={false}
-							/>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis
+							dataKey="iteration"
+							label={{ value: "Iterations", position: "bottom", offset: 0 }}
+						/>
+						{/* Left Y-Axis for Probability */}
+						<YAxis
+							label={{ value: "Probability", angle: -90, position: "insideLeft" }}
+							domain={[0, 1]}  // Probability values are between 0 and 1
+						/>
+						<Tooltip />
+						<Line
+							type="monotone"
+							dataKey="probability"
+							stroke="#10b981"
+							strokeWidth={2}
+							dot={false}
+							name="Probability"
+						/>
 						</LineChart>
 					</ResponsiveContainer>
+					</div>
+				)}
+				</div>
+
+				<div className="mt-4 flex justify-center gap-6">
+				<div className="flex items-center gap-2">
+					<div className="w-4 h-4 bg-indigo-500 rounded-full"></div>
+					<span className="text-sm text-gray-600">Score</span>
+				</div>
+				{selectedAlgorithm === "5" && (
+					<div className="flex items-center gap-2">
+					<div className="w-4 h-4 bg-emerald-500 rounded-full"></div>
+					<span className="text-sm text-gray-600">Probability</span>
+					</div>
+				)}
 				</div>
 			</div>
 		</div>
@@ -305,6 +371,11 @@ const ResultPage = ({ selectedAlgorithm, maxIteration, population }) => {
 								<p className="text-xl text-gray-700">
 									Score: {cubeStates[currentFrame][2]}
 								</p>
+								{selectedAlgorithm === "5" && cubeStates[currentFrame][3] !== undefined && (
+                                    <p className="text-xl text-gray-700">
+                                        Frequency Local: {cubeStates[currentFrame][3]}
+                                    </p>
+                                )}
 							</div>
 						)}
 					</div>
