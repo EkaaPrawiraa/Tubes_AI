@@ -13,15 +13,25 @@ Halo, jadi ini adalah beberapa cara yang dapat dilakukan dalam menjalankan progr
 <br>
 Clone repository ini ke dalam komputer kamu: <br>
 
-> `git clone https://github.com/OrdinaryAzazel/Algeo01-22001`
+> `git clone https://github.com/EkaaPrawiraa/Tubes_AI
 
-Lalu masuk ke dalam direktori bin:<br>
+Lalu masuk ke dalam direktori:<br>
 
-> `cd bin`
+> `cd frontend`
 
 Kemudian jalankan perintah berikut: <br>
 
-> `java src.DriverMain` <br>
+> `npm install` <br>
+Lalu lakukan perintah berikut: <br>
+
+> `npm run start` <br>
+
+Untuk Backend, masuk ke dalam direktori: <br>
+
+> `cd backend` <br>
+Kemudian jalankan perintah berikut: <br>
+
+> `python manage.py runserver` <br>
 
 Taraaa... program berhasil dijalankan...
 
@@ -29,33 +39,24 @@ Taraaa... program berhasil dijalankan...
 
 ---
 
-Pada program ini kami membuat beberapa fitur dalam menyelesaikan Sistem Persamaan Linear, Determinan, dan Aplikasinya. Adapun beberapa fitur yang kami buat sebagai berikut,
+Pada program ini kami membuat beberapa algoritma Local Search dalam pencarian solusi Diagonal Magic Cube. Adapun beberapa algoritma yang kami buat implementasikan berikut,
 <br>
 
-    1. Sistem Persamaan Linear
-        a. Metode Eliminasi Gauss
-        b. Metode Eliminasi Gauss-Jordan
-        c. Metode Matriks Balikan
-        d. Metode Kaidah Cramer
-    2. Determinan
-        a. Metode OBE
-        b. Metode Ekspansi Kofaktor
-    3. Matriks Balikan
-        a. Metode Eliminasi Gauss-Jordan
-        b. Metode Adjoin
-    4. Interpolasi
-        a. Interpolasi Polinom
-        b. Interpolasi Bicubic Spline
-        c. Perbesaran Citra Menggunakan Interpolasi Bicubic Spline
-    5. Regresi Linear Berganda
+    1. Steepest Ascent Hill-climbing
+    2. Hill-climbing with Sideways Move
+    3. Random Restart Hill-climbing
+    4. Stochastic Hill-climbing
+    5. Simulated Annealing
+    6. Genetic Algorithm
 
 ### Contributing
 
 ---
 
-- Mohammad Nugraha Eka Prawira
-- Muhammad Yusuf Rafi
-- Muhamad Rifki Virziadeili Harisman
+- Mohammad Nugraha Eka Prawira (13522001)
+- Muhammad Yusuf Rafi (13522009)
+- Muhamad Rifki Virziadeili Harisman (13522120)
+- Ahmad Farid Mudrika (13522008)
   <br>
   <br>
   <br>
