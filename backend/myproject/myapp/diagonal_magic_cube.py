@@ -101,6 +101,9 @@ class DiagonalMagicCube:
     def calculate_magic_number(self):
         return ((self.size + 1) * self.n) // 2
     
+    def generate_random_cube(self):
+        return DiagonalMagicCube(self.n)
+    
     def initialize_cube(self):
         numbers = np.arange(1, self.size + 1, dtype=np.int32)
         np.random.shuffle(numbers)

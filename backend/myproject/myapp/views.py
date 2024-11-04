@@ -39,8 +39,8 @@ def receive_cube(request):
             hill_climbing = RandomRestartHillClimbing(cube,max_iteration)
             result,total_time = hill_climbing.run()
             processed_result = [
-                (i, j.tolist() if isinstance(j, np.ndarray) else j, k)
-                for i, j, k in result
+                (i, j.tolist() if isinstance(j, np.ndarray) else j, k,l)
+                for i, j, k, l in result
             ]
             return JsonResponse({
                     "message": "Data received successfully",
