@@ -87,14 +87,14 @@ const SelectionPage = ({ onSelectAlgorithm }) => {
 								)}
 								<div className="space-y-2">
 									<label className="block text-sm font-medium text-gray-700">
-										Maximum Iterations
+										{algorithm === "3" ? "Maximum Sideways Move" : "Maximum Iterations"}
 									</label>
 									<input
 										type="number"
 										value={maxIteration}
 										onChange={(e) => setMaxIteration(Number(e.target.value))}
 										className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-										placeholder="Enter max iterations"
+										placeholder={algorithm === "3" ? "Enter max sideways move" : "Enter max iterations"}
 									/>
 								</div>
 							</div>
