@@ -8,8 +8,8 @@ from .steepest_ascent_HC import SteepestHillClimbing
 import numpy as np
 from .hc_sideways import SidewaysHillClimbing
 from .stochastic_hc import StochasticHillClimbing
+from .geneticv2 import play
 from .simulated_annealing import SimulatedAnnealing
-# from .st import DiagonalMagicCube
 
 # Create your views here.
 
@@ -73,6 +73,21 @@ def receive_cube(request):
                     "result": processed_result,
                     "total_time": total_time
             })
+<<<<<<< HEAD
+        # elif (data.algorithm==5): simulated
+        elif (data["algorithm"]==6): #ga
+            init_pop, obj_func, state, duration, final_state = play(data['population'], data['max_iteration'])
+            return JsonResponse({
+                    "message": "Data received successfully",
+                    "init_pop": init_pop, 
+                    "final_obj_func": obj_func, 
+                    "state": state, 
+                    "duration": duration, 
+                    "final_state": final_state,
+                    "total_time": duration
+            })
+
+=======
         elif (int(data['algorithm'])==5): #simulated
             simulated = SimulatedAnnealing(cube)
             result,total_time = simulated.run()
@@ -92,6 +107,7 @@ def receive_cube(request):
                     "total_time": total_time,
             })
         # elif (data.algorithm==6): ga
+>>>>>>> main
         return JsonResponse({"error":"Algorithm not recognized"},status = 404)
     # Jika metode bukan POST, kembalikan error
     return JsonResponse({"error": "Invalid request"}, status=400)
