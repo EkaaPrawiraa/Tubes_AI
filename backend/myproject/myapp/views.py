@@ -100,14 +100,11 @@ def receive_cube(request):
                 ) 
                 for i, j, k, l, m in result
             ]
-
-
             return JsonResponse({
                     "message": "Data received successfully",
                     "result": processed_result,
                     "total_time": total_time,
             })
-        # elif (data.algorithm==6): ga
         return JsonResponse({"error":"Algorithm not recognized"},status = 404)
     # Jika metode bukan POST, kembalikan error
     return JsonResponse({"error": "Invalid request"}, status=400)
