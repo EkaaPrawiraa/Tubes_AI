@@ -16,6 +16,7 @@ class GeneticAlgorithm:
         self.priorqueue = None
         self.fitnessPopulation = self.fitness()
         self.duration = None
+        self.population_total = []
 
     def generateRandomPopulation(self):
         population = []
@@ -39,7 +40,7 @@ class GeneticAlgorithm:
             fitness_population.append(fit)
             sum+=fit
 
-        self.list_state.append([minscore, sum/len(self.population)])
+        self.list_state.append((minscore, sum/len(self.population)))
         self.priorqueue = pq
         fitness_population = [fit/sum for fit in fitness_population]
         fitness_population_range = [fitness_population[0]]
@@ -101,15 +102,40 @@ class GeneticAlgorithm:
         isFound = False
         iter=0
         while(len(self.population)>1 and not isFound and iter<iteration):
+            tmp_population = [[ind,DiagonalMagicCube.constructor(ind).evaluate()] for ind in self.population]
+            self.population_total.append(tmp_population)
             isFound = self.reproduce()
             self.fitnessPopulation = self.fitness()
             iter+=1
             print(f"kawin ke-{iter}")
         self.duration = time.time()-start_time
         
+# [[
+#     [state,score]]
+    
+#     ]
 
 
 def play(population=10000, iteration=200):
+    gene = GeneticAlgorithm(population)
+    gene.run(iteration)
+    final = heapq.nsmallest(1, gene.priorqueue)
+    final_obj_func = final[0][0]
+    final_state = gene.population[final[0][1]]
+    list_state = gene.list_state
+    duration = gene.duration
+    # print(gene.population_total)
+    print(gene.population_total[0][1][0])
+    # print(gene.population_total[0][1][1])
+    res = []
+    i=0
+    while(i<len(gene.population_total)):
+        res.append([i,gene.population_total[i][1][0], gene.population_total[i][1][1], list_state[i][0], list_state[i][1]])
+        i+=1
+    res.append([i,final_state, final_state, final_obj_func, final_obj_func])
+    return res, duration 
+
+def play_in(population=10000, iteration=200):
     gene = GeneticAlgorithm(population)
     gene.run(iteration)
     final = heapq.nsmallest(1, gene.priorqueue)
@@ -124,14 +150,18 @@ def play(population=10000, iteration=200):
 if __name__ == "__main__":
     population = int(input("Population num: "))
     iteration = int(input("Iteration: "))
-    init_pop, obj_func, state, duration, final_state = play(population=population, iteration=iteration)
-    print(f"Initial population: {init_pop}")
-    for iter in range (len(state)):
-        print(f"Fertilization: {iter}")
-        print(f"Optimum value: {state[0]}")
-        print(f"Average: {state[1]}")
+    # init_pop, obj_func, state, duration, final_state = play_in(population=population, iteration=iteration)
+    # print(f"Initial population: {init_pop}")
+    # for iter in range (len(state)):
+    #     print(f"Fertilization: {iter}")
+    #     print(f"Optimum value: {state[0]}")
+    #     print(f"Average: {state[1]}")
 
-    print(f"Final Objective function: {obj_func}")
-    print(f"Final state: {final_state}")
-    print(f"Duration: {duration}ms")
+    # print(f"Final Objective function: {obj_func}")
+    # print(f"Final state: {final_state}")
+    # print(f"Duration: {duration}ms")
+    res, duration = play(population=population, iteration=iteration)
+    print(res)
+    print(duration)
+
 

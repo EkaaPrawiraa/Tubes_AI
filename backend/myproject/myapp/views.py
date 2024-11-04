@@ -74,15 +74,20 @@ def receive_cube(request):
                     "total_time": total_time
             })
         elif (data["algorithm"]==6): #ga
-            init_pop, obj_func, state, duration, final_state = play(data['population'], data['max_iteration'])
+            result,total_time = play(data['population'], data['max_iteration'])
+            processed_result = [
+                (
+                    i,                                          
+                    j.tolist() if isinstance(j, np.ndarray) else j,  # cube state
+                    k, l,m                                           
+                ) 
+                for i, j, k, l, m in result
+            ]
+            
             return JsonResponse({
                     "message": "Data received successfully",
-                    "init_pop": init_pop, 
-                    "final_obj_func": obj_func, 
-                    "state": state, 
-                    "duration": duration, 
-                    "final_state": final_state,
-                    "total_time": duration
+                    "result": processed_result,
+                    "total_time": total_time,
             })
         elif (int(data['algorithm'])==5): #simulated
             simulated = SimulatedAnnealing(cube)
