@@ -2,7 +2,7 @@
 
 ![messageImage_1730737881186](https://github.com/user-attachments/assets/f77f85e1-cd7a-48c8-a9b0-4404c04177bc)
 <br>
-Tugas besar ini berkaitan dengan topik penyelesaian Sistem Persamaan Linear, Determinan, dan Aplikasinya.<br>
+Tugas besar ini berkaitan dengan topik penyelesaian Magic Cube 5x5 menggunakan Local Search Algorithm.<br>
 
 ### Let's get start
 
@@ -28,7 +28,7 @@ Lalu lakukan perintah berikut: <br>
 
 Untuk Backend, masuk ke dalam direktori: <br>
 
-> `cd src//backend` <br>
+> `cd src/backend` <br>
 Kemudian jalankan perintah berikut: <br>
 > `pip install -r requirements.txt` <br>
 > `python manage.py runserver` <br>
