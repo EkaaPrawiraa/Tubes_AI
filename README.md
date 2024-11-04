@@ -13,7 +13,7 @@ Halo, jadi ini adalah beberapa cara yang dapat dilakukan dalam menjalankan progr
 <br>
 Clone repository ini ke dalam komputer kamu: <br>
 
-> `git clone https://github.com/EkaaPrawiraa/Tubes_AI
+> `git clone https://github.com/EkaaPrawiraa/Tubes_AI`
 
 Lalu masuk ke dalam direktori:<br>
 
