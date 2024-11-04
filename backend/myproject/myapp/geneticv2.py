@@ -1,4 +1,4 @@
-from diagonal_magic_cube import DiagonalMagicCube
+from .diagonal_magic_cube import DiagonalMagicCube
 import numpy as np
 import random
 import bisect
