@@ -17,7 +17,7 @@ Clone repository ini ke dalam komputer kamu: <br>
 
 Lalu masuk ke dalam direktori:<br>
 
-> `cd frontend`
+> `cd src/frontend`
 
 Kemudian jalankan perintah berikut: <br>
 
@@ -28,9 +28,9 @@ Lalu lakukan perintah berikut: <br>
 
 Untuk Backend, masuk ke dalam direktori: <br>
 
-> `cd backend` <br>
+> `cd src//backend` <br>
 Kemudian jalankan perintah berikut: <br>
-
+> `pip install -r requirements.txt` <br>
 > `python manage.py runserver` <br>
 
 Taraaa... program berhasil dijalankan...
