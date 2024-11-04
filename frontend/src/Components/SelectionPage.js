@@ -19,7 +19,7 @@ const SelectionPage = ({ onSelectAlgorithm }) => {
 				<div className="space-y-6">
 					<div className="text-center">
 						<h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-							Magic Cube Algorithm
+							Algorithm
 						</h2>
 						<p className="mt-2 text-gray-600">
 							Select your preferred algorithm and parameters

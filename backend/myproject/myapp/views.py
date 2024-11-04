@@ -75,6 +75,7 @@ def receive_cube(request):
             })
         elif (data["algorithm"]==6): #ga
             result,total_time = play(data['population'], data['max_iteration'])
+            # print(total_time)
             processed_result = [
                 (
                     i,                                          

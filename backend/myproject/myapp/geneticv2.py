@@ -4,6 +4,7 @@ import random
 import bisect
 import heapq
 import time
+import copy
 
 e = 10e-6
 
@@ -28,19 +29,21 @@ class GeneticAlgorithm:
         global e
         pq = []
         sum = 0
+        sum_score = 0
         fitness_population = []
         minscore = 10e9
         for i in range (len(self.population)):
             score = DiagonalMagicCube.constructor(self.population[i]).evaluate()
+            sum_score += score
             minscore = min(minscore, score)
             fit = 1/(score + e)
-            print(fit)
-            print(score)
+            # print(fit)
+            # print(score)
             heapq.heappush(pq,(score, i))
             fitness_population.append(fit)
             sum+=fit
 
-        self.list_state.append((minscore, sum/len(self.population)))
+        self.list_state.append((minscore, sum_score/len(self.population)))
         self.priorqueue = pq
         fitness_population = [fit/sum for fit in fitness_population]
         fitness_population_range = [fitness_population[0]]
@@ -107,8 +110,10 @@ class GeneticAlgorithm:
             isFound = self.reproduce()
             self.fitnessPopulation = self.fitness()
             iter+=1
-            print(f"kawin ke-{iter}")
-        self.duration = time.time()-start_time
+            # print(f"kawin ke-{iter}")
+        end_duration = time.time()
+        self.duration = end_duration-start_time
+        print(self.duration)
         
 # [[
 #     [state,score]]
@@ -125,14 +130,15 @@ def play(population=10000, iteration=200):
     list_state = gene.list_state
     duration = gene.duration
     # print(gene.population_total)
-    print(gene.population_total[0][1][0])
+    # print(gene.population_total[0][1][0])
     # print(gene.population_total[0][1][1])
     res = []
     i=0
     while(i<len(gene.population_total)):
-        res.append([i,gene.population_total[i][1][0], gene.population_total[i][1][1], list_state[i][0], list_state[i][1]])
+        res.append([i,gene.population_total[i][1][0].copy(), gene.population_total[i][1][1], list_state[i][0], list_state[i][1]])
         i+=1
-    res.append([i,final_state, final_state, final_obj_func, final_obj_func])
+    # print(final_obj_func)
+    res.append([i,final_state,final_obj_func, final_obj_func, final_obj_func])
     return res, duration 
 
 def play_in(population=10000, iteration=200):
@@ -161,7 +167,7 @@ if __name__ == "__main__":
     # print(f"Final state: {final_state}")
     # print(f"Duration: {duration}ms")
     res, duration = play(population=population, iteration=iteration)
-    print(res)
-    print(duration)
+    # print(res)
+    # print(duration)
 
 
