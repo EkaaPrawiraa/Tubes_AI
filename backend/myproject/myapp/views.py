@@ -9,8 +9,7 @@ import numpy as np
 from .hc_sideways import SidewaysHillClimbing
 from .stochastic_hc import StochasticHillClimbing
 from .geneticv2 import play
-
-# from .st import DiagonalMagicCube
+from .simulated_annealing import SimulatedAnnealing
 
 # Create your views here.
 
@@ -40,8 +39,8 @@ def receive_cube(request):
             hill_climbing = RandomRestartHillClimbing(cube,max_iteration)
             result,total_time = hill_climbing.run()
             processed_result = [
-                (i, j.tolist() if isinstance(j, np.ndarray) else j, k)
-                for i, j, k in result
+                (i, j.tolist() if isinstance(j, np.ndarray) else j, k,l)
+                for i, j, k, l in result
             ]
             return JsonResponse({
                     "message": "Data received successfully",
@@ -74,6 +73,7 @@ def receive_cube(request):
                     "result": processed_result,
                     "total_time": total_time
             })
+<<<<<<< HEAD
         # elif (data.algorithm==5): simulated
         elif (data["algorithm"]==6): #ga
             init_pop, obj_func, state, duration, final_state = play(data['population'], data['max_iteration'])
@@ -87,6 +87,27 @@ def receive_cube(request):
                     "total_time": duration
             })
 
+=======
+        elif (int(data['algorithm'])==5): #simulated
+            simulated = SimulatedAnnealing(cube)
+            result,total_time = simulated.run()
+            processed_result = [
+                (
+                    i,                                          
+                    j.tolist() if isinstance(j, np.ndarray) else j,  # cube state
+                    k, l,m                                           
+                ) 
+                for i, j, k, l, m in result
+            ]
+
+
+            return JsonResponse({
+                    "message": "Data received successfully",
+                    "result": processed_result,
+                    "total_time": total_time,
+            })
+        # elif (data.algorithm==6): ga
+>>>>>>> main
         return JsonResponse({"error":"Algorithm not recognized"},status = 404)
     # Jika metode bukan POST, kembalikan error
     return JsonResponse({"error": "Invalid request"}, status=400)
