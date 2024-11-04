@@ -16,6 +16,7 @@ class GeneticAlgorithm:
         self.priorqueue = None
         self.fitnessPopulation = self.fitness()
         self.duration = None
+        self.result_list = []
 
     def generateRandomPopulation(self):
         population = []
@@ -39,7 +40,7 @@ class GeneticAlgorithm:
             fitness_population.append(fit)
             sum+=fit
 
-        self.list_state.append([minscore, sum/len(self.population)])
+        self.list_state.append((minscore, sum/len(self.population)))
         self.priorqueue = pq
         fitness_population = [fit/sum for fit in fitness_population]
         fitness_population_range = [fitness_population[0]]
